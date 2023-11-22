@@ -1,6 +1,6 @@
 # Next.js, Vercel AI SDK, Llama.cpp & ModelFusion starter
 
-This starter example shows how to use [Next.js](https://nextjs.org/), the [Vercel AI SDK](https://sdk.vercel.ai/docs), [Llama.cpp](https://github.com/ggerganov/llama.cpp) and [ModelFusion](modelfusion.dev) to create a ChatGPT-like AI-powered streaming chat bot.
+This starter example shows how to use [Next.js](https://nextjs.org/), the [Vercel AI SDK](https://sdk.vercel.ai/docs), [Llama.cpp](https://github.com/ggerganov/llama.cpp) and [ModelFusion](https://modelfusion.dev) to create a ChatGPT-like AI-powered streaming chat bot.
 
 ## Setup
 
