@@ -2,7 +2,7 @@ import { Message, StreamingTextResponse, readableFromAsyncIterable } from "ai";
 import {
   ChatMLPromptFormat,
   ChatMessage,
-  LlamaCppTextGenerationModel,
+  llamacpp,
   streamText,
   trimChatPrompt,
 } from "modelfusion";
@@ -12,13 +12,13 @@ export const runtime = "edge";
 export async function POST(req: Request) {
   const { messages }: { messages: Message[] } = await req.json();
 
-  const model = new LlamaCppTextGenerationModel({
-    temperature: 0,
-    contextWindowSize: 4096,
-    maxCompletionTokens: 512, // Room for answer
-  })
-    .withTextPrompt() // only text, no images
-    .withPromptFormat(ChatMLPromptFormat.chat());
+  const model = llamacpp
+    .TextGenerator({
+      temperature: 0,
+      contextWindowSize: 4096,
+      maxCompletionTokens: 512, // Room for answer
+    })
+    .withTextPromptFormat(ChatMLPromptFormat.chat());
 
   // Use ModelFusion to call llama.cpp:
   const textStream = await streamText(
