@@ -33,3 +33,73 @@ For each example, you also need to download the GGUF model and start the Llama.c
 1. Server start: `./server -m models/openhermes-2.5-mistral-7b.Q4_K_M.gguf -c 4096` (with the right model path)
 1. Go to http://localhost:3000/openhermes
 1. Code: `app/api/openhermes/route.ts`
+
+## Example Route
+
+```ts
+import { ModelFusionTextStream } from "@modelfusion/vercel-ai";
+import { Message, StreamingTextResponse } from "ai";
+import {
+  TextChatMessage,
+  TextPromptFormat,
+  llamacpp,
+  streamText,
+  trimChatPrompt,
+} from "modelfusion";
+
+export const runtime = "edge";
+
+export async function POST(req: Request) {
+  const { messages }: { messages: Message[] } = await req.json();
+
+  const model = llamacpp
+    .TextGenerator({
+      temperature: 0,
+      contextWindowSize: 4096,
+      maxCompletionTokens: 512, // Room for answer
+    })
+    .withTextPromptFormat(TextPromptFormat.chat()); // basic text prompt
+
+  // Use ModelFusion to call llama.cpp:
+  const textStream = await streamText(
+    model,
+    // reduce chat prompt length to fit the context window:
+    await trimChatPrompt({
+      model,
+      prompt: {
+        system:
+          "You are an AI chat bot. " +
+          "Follow the user's instructions carefully.",
+
+        // map Vercel AI SDK Message to ModelFusion TextChatMessage:
+        messages: messages.filter(
+          // only user and assistant roles are supported:
+          (message) => message.role === "user" || message.role === "assistant"
+        ) as TextChatMessage[],
+      },
+    })
+  );
+
+  // Return the result using the Vercel AI SDK:
+  return new StreamingTextResponse(
+    ModelFusionTextStream(
+      textStream,
+      // optional callbacks:
+      {
+        onStart() {
+          console.log("onStart");
+        },
+        onToken(token) {
+          console.log("onToken", token);
+        },
+        onCompletion: () => {
+          console.log("onCompletion");
+        },
+        onFinal(completion) {
+          console.log("onFinal", completion);
+        },
+      }
+    )
+  );
+}
+```
