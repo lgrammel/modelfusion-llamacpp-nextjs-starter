@@ -1,7 +1,7 @@
 import { ModelFusionTextStream } from "@modelfusion/vercel-ai";
 import { Message, StreamingTextResponse } from "ai";
 import {
-  Llama2PromptFormat,
+  Llama2Prompt,
   TextChatMessage,
   llamacpp,
   streamText,
@@ -19,7 +19,7 @@ export async function POST(req: Request) {
       contextWindowSize: 4096, // Llama 2 context window size
       maxCompletionTokens: 512, // Room for answer
     })
-    .withTextPromptFormat(Llama2PromptFormat.chat());
+    .withTextPromptTemplate(Llama2Prompt.chat());
 
   // Use ModelFusion to call llama.cpp:
   const textStream = await streamText(
