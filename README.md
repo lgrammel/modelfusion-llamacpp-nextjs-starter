@@ -40,8 +40,8 @@ For each example, you also need to download the GGUF model and start the Llama.c
 import { ModelFusionTextStream } from "@modelfusion/vercel-ai";
 import { Message, StreamingTextResponse } from "ai";
 import {
+  Llama2Prompt,
   TextChatMessage,
-  TextPromptFormat,
   llamacpp,
   streamText,
   trimChatPrompt,
@@ -55,10 +55,11 @@ export async function POST(req: Request) {
   const model = llamacpp
     .TextGenerator({
       temperature: 0,
-      contextWindowSize: 4096,
+      cachePrompt: true,
+      contextWindowSize: 4096, // Llama 2 context window size
       maxCompletionTokens: 512, // Room for answer
     })
-    .withTextPromptFormat(TextPromptFormat.chat()); // basic text prompt
+    .withTextPromptTemplate(Llama2Prompt.chat());
 
   // Use ModelFusion to call llama.cpp:
   const textStream = await streamText(
