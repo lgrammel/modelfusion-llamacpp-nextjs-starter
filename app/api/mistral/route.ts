@@ -18,7 +18,7 @@ export async function POST(req: Request) {
       temperature: 0,
       cachePrompt: true,
       contextWindowSize: 4096,
-      maxCompletionTokens: 512, // Room for answer
+      maxGenerationTokens: 512, // Room for answer
     })
     .withTextPromptTemplate(TextPrompt.chat()); // basic text prompt
 

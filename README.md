@@ -57,7 +57,7 @@ export async function POST(req: Request) {
       temperature: 0,
       cachePrompt: true,
       contextWindowSize: 4096, // Llama 2 context window size
-      maxCompletionTokens: 512, // Room for answer
+      maxGenerationTokens: 512, // Room for answer
     })
     .withTextPromptTemplate(Llama2Prompt.chat());
 
