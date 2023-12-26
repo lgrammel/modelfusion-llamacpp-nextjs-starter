@@ -37,11 +37,10 @@ For each example, you also need to download the GGUF model and start the Llama.c
 ## Example Route
 
 ```ts
-import { ModelFusionTextStream } from "@modelfusion/vercel-ai";
+import { ModelFusionTextStream, asChatMessages } from "@modelfusion/vercel-ai";
 import { Message, StreamingTextResponse } from "ai";
 import {
   Llama2Prompt,
-  ChatMessage,
   llamacpp,
   streamText,
   trimChatPrompt,
@@ -73,10 +72,7 @@ export async function POST(req: Request) {
           "Follow the user's instructions carefully.",
 
         // map Vercel AI SDK Message to ModelFusion ChatMessage:
-        messages: messages.filter(
-          // only user and assistant roles are supported:
-          (message) => message.role === "user" || message.role === "assistant"
-        ) as ChatMessage[],
+        messages: asChatMessages(messages),
       },
     })
   );
