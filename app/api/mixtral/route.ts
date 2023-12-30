@@ -17,7 +17,7 @@ export async function POST(req: Request) {
       temperature: 0,
       cachePrompt: true,
       contextWindowSize: 32768,
-      maxGenerationTokens: 512, // Room for answer
+      maxGenerationTokens: 1024, // Room for answer
     })
     .withTextPromptTemplate(MistralInstructPrompt.chat()); // basic text prompt
 
