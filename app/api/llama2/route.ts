@@ -1,11 +1,6 @@
 import { ModelFusionTextStream, asChatMessages } from "@modelfusion/vercel-ai";
 import { Message, StreamingTextResponse } from "ai";
-import {
-  Llama2Prompt,
-  llamacpp,
-  streamText,
-  trimChatPrompt,
-} from "modelfusion";
+import { llamacpp, streamText, trimChatPrompt } from "modelfusion";
 
 export const runtime = "edge";
 
@@ -13,13 +8,14 @@ export async function POST(req: Request) {
   const { messages }: { messages: Message[] } = await req.json();
 
   const model = llamacpp
-    .TextGenerator({
+    .CompletionTextGenerator({
+      promptTemplate: llamacpp.prompt.Llama2,
       temperature: 0,
       cachePrompt: true,
       contextWindowSize: 4096, // Llama 2 context window size
       maxGenerationTokens: 512, // Room for answer
     })
-    .withTextPromptTemplate(Llama2Prompt.chat());
+    .withChatPrompt();
 
   // Use ModelFusion to call llama.cpp:
   const textStream = await streamText(
