@@ -1,6 +1,6 @@
 import { ModelFusionTextStream, asChatMessages } from "@modelfusion/vercel-ai";
 import { Message, StreamingTextResponse } from "ai";
-import { llamacpp, streamText, trimChatPrompt } from "modelfusion";
+import { llamacpp, streamText } from "modelfusion";
 
 export const runtime = "edge";
 
@@ -12,7 +12,6 @@ export async function POST(req: Request) {
       promptTemplate: llamacpp.prompt.Mistral,
       temperature: 0,
       cachePrompt: true,
-      contextWindowSize: 32768,
       maxGenerationTokens: 1024, // Room for answer
     })
     .withChatPrompt();
@@ -20,18 +19,14 @@ export async function POST(req: Request) {
   // Use ModelFusion to call llama.cpp:
   const textStream = await streamText({
     model,
-    // reduce chat prompt length to fit the context window:
-    prompt: await trimChatPrompt({
-      model,
-      prompt: {
-        system:
-          "You are an AI chat bot. " +
-          "Follow the user's instructions carefully.",
+    prompt: {
+      system:
+        "You are an AI chat bot. " +
+        "Follow the user's instructions carefully.",
 
-        // map Vercel AI SDK Message to ModelFusion ChatMessage:
-        messages: asChatMessages(messages),
-      },
-    }),
+      // map Vercel AI SDK Message to ModelFusion ChatMessage:
+      messages: asChatMessages(messages),
+    },
   });
 
   // Return the result using the Vercel AI SDK:
