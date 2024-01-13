@@ -18,10 +18,10 @@ export async function POST(req: Request) {
     .withChatPrompt();
 
   // Use ModelFusion to call llama.cpp:
-  const textStream = await streamText(
+  const textStream = await streamText({
     model,
     // reduce chat prompt length to fit the context window:
-    await trimChatPrompt({
+    prompt: await trimChatPrompt({
       model,
       prompt: {
         system:
@@ -31,8 +31,8 @@ export async function POST(req: Request) {
         // map Vercel AI SDK Message to ModelFusion ChatMessage:
         messages: asChatMessages(messages),
       },
-    })
-  );
+    }),
+  });
 
   // Return the result using the Vercel AI SDK:
   return new StreamingTextResponse(
